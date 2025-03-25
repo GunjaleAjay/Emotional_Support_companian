@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog Idea Generator</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='/styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Emotional Support Companion</h1>
+            <p>Get creative emotional post ideas for your content creation needs</p>
+        </header>
+
+        <div class="form-container">
+            <form id="ideaForm">
+                <div class="form-group">
+                    <label for="niche">Your Content:</label>
+                    <input type="text" id="niche" name="niche" required placeholder="e.g., happiness, sadness, anxiety">
+                </div>
+
+                <div class="form-group">
+                    <label for="reason">Your Content Reason:</label>
+                    <input type="text" id="reason" name="reason" required placeholder="Explain why you want this content">
+                </div>
+
+                <div class="form-group">
+                    <label for="num_ideas">Number of Ideas:</label>
+                    <select id="num_ideas" name="num_ideas">
+                        <option value="1">1</option>
+                        <option value="3" selected>3</option>
+                        <option value="5">5</option>
+                        <option value="10">10</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="tone">Content Tone:</label>
+                    <select id="tone" name="tone">
+                        <option value="professional" selected>Professional</option>
+                        <option value="casual">Casual</option>
+                        <option value="humorous">Humorous</option>
+                        <option value="inspirational">Inspirational</option>
+                        <option value="educational">Educational</option>
+                    </select>
+                </div>
+
+                <div class="form-group checkbox">
+                    <input type="checkbox" id="include_outline" name="include_outline" checked>
+                    <label for="include_outline">Include Post Outlines</label>
+                </div>
+
+                <div class="form-group">
+                    <label for="model">LLM Model:</label>
+                    <select id="model" name="model"></select>
+                </div>
+
+                <button type="submit" id="generateBtn">Generate Ideas</button>
+            </form>
+        </div>
+
+        <div class="results-container" id="resultsContainer" style="display: none;">
+            <h2>Your Emotional Support Ideas</h2>
+            <div id="loading" style="display: none;">
+                <div class="spinner"></div>
+                <p>Generating ideas...</p>
+            </div>
+            <div id="results"></div>
+            <button id="copyBtn">Copy to Clipboard</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const response = await fetch('/models');
+                const data = await response.json();
+                const modelSelect = document.getElementById('model');
+                modelSelect.innerHTML = '';
+                data.models.forEach(model => {
+                    const option = document.createElement('option');
+                    option.value = model;
+                    option.textContent = model;
+                    modelSelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error fetching models:', error);
+            }
+        });
+
+        document.getElementById('ideaForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const resultsContainer = document.getElementById('resultsContainer');
+            const loading = document.getElementById('loading');
+            const results = document.getElementById('results');
+            resultsContainer.style.display = 'block';
+            loading.style.display = 'block';
+            results.innerHTML = '';
+
+            try {
+                const response = await fetch('/generate', { method: 'POST', body: formData });
+                if (!response.ok) throw new Error(`Error: ${response.statusText}`);
+                const data = await response.json();
+                results.innerHTML = formatResponseWithMarkdown(data.generated_ideas);
+                notifyUser('Ideas generated successfully!');
+                speak('Your ideas have been generated successfully!');
+            } catch (error) {
+                results.innerHTML = `<div class="error">Error: ${error.message}</div>`;
+                notifyUser(`Error: ${error.message}`);
+                speak(`An error occurred: ${error.message}`);
+            } finally {
+                loading.style.display = 'none';
+            }
+        });
+
+        document.getElementById('copyBtn').addEventListener('click', () => {
+            navigator.clipboard.writeText(document.getElementById('results').innerText)
+                .then(() => alert('Copied to clipboard'))
+                .catch(err => console.error('Failed to copy:', err));
+        });
+
+        function formatResponseWithMarkdown(text) {
+            return text.replace(/\n/g, '<br>')  // Converts newlines to <br>
+                .replace(/#{1,6}\s+(.*?)(?:<br>|$)/g, '<h3>$1</h3>')  // Converts headers to <h3>
+                .replace(/(\d+\.\s+)(.*?)(?:<br>|$)/g, '<div class="list-item"><span class="list-number">$1</span>$2</div>')  // Converts numbered lists
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')  // Bold text
+                .replace(/\*(.*?)\*/g, '<em>$1</em>');  // Italic text
+        }
+
+        // Notification function
+        function notifyUser(message) {
+            if ("Notification" in window && Notification.permission === "granted") {
+                new Notification(message);
+            } else if (Notification.permission !== "denied") {
+                Notification.requestPermission().then(permission => {
+                    if (permission === "granted") {
+                        new Notification(message);
+                    }
+                });
+            }
+        }
+
+        // Voice Assistant function
+        function speak(text) {
+            const speech = new SpeechSynthesisUtterance(text);
+            speech.lang = "en-US";
+            window.speechSynthesis.speak(speech);
+        }
+    </script>
+</body>
+</html>
