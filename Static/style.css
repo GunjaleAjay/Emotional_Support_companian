@@ -1,0 +1,209 @@
+:root {
+    --primary-color: #1a2a3a;
+    --secondary-color: #3a9ad9;
+    --accent-color: #e74c3c;
+    --background-color: #7b8fa1;
+    --text-color: #2c3e50;
+    --light-gray: #ecf0f1;
+    --border-radius: 12px;
+    --box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    line-height: 1.6;
+    color: var(--text-color);
+    background-color: var(--background-color);
+    padding: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 900px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    overflow: hidden;
+    backdrop-filter: blur(12px);
+    padding: 30px;
+    transition: transform 0.3s ease;
+}
+
+.container:hover {
+    transform: scale(1.02);
+}
+
+header {
+    background: linear-gradient(135deg, #1a2a3a, #3a9ad9);
+    color: white;
+    padding: 35px;
+    text-align: center;
+    border-top-left-radius: var(--border-radius);
+    border-top-right-radius: var(--border-radius);
+}
+
+header h1 {
+    font-size: 2.5rem;
+    letter-spacing: 1px;
+}
+
+.form-container {
+    padding: 25px;
+    border-bottom: 2px solid var(--light-gray);
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: 6px;
+    font-size: 1.1rem;
+}
+
+input[type="text"],
+select {
+    width: 100%;
+    padding: 14px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: var(--border-radius);
+    font-size: 16px;
+    background: rgba(255, 255, 255, 0.6);
+    transition: 0.3s ease;
+}
+
+input[type="text"]:focus,
+select:focus {
+    outline: none;
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 8px rgba(58, 154, 217, 0.4);
+}
+
+.checkbox {
+    display: flex;
+    align-items: center;
+}
+
+.checkbox input {
+    margin-right: 10px;
+    width: 18px;
+    height: 18px;
+    accent-color: var(--secondary-color);
+}
+
+button {
+    background: var(--secondary-color);
+    color: white;
+    border: none;
+    padding: 14px 22px;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+}
+
+button:hover {
+    background: #2178b5;
+    transform: translateY(-3px);
+}
+
+.results-container {
+    padding: 30px;
+}
+
+.results-container h2 {
+    margin-bottom: 20px;
+    color: var(--primary-color);
+    border-bottom: 2px solid var(--light-gray);
+    padding-bottom: 10px;
+    font-size: 1.8rem;
+}
+
+#results {
+    background-color: rgba(255, 255, 255, 0.7);
+    padding: 20px;
+    border-radius: var(--border-radius);
+    margin-bottom: 20px;
+    min-height: 200px;
+    line-height: 1.8;
+    box-shadow: var(--box-shadow);
+}
+
+#results h3 {
+    color: var(--secondary-color);
+    margin: 15px 0 10px;
+}
+
+.spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border-left-color: var(--secondary-color);
+    animation: spin 1s linear infinite;
+    margin: 20px auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+#loading {
+    text-align: center;
+    font-size: 1.2rem;
+    color: var(--primary-color);
+}
+
+.error {
+    color: var(--accent-color);
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+#copyBtn {
+    margin-top: 15px;
+    background: var(--primary-color);
+    transition: all 0.3s ease;
+}
+
+#copyBtn:hover {
+    background: #141e28;
+    transform: translateY(-3px);
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    body {
+        padding: 15px;
+    }
+
+    header {
+        padding: 25px;
+    }
+
+    .form-container,
+    .results-container {
+        padding: 20px;
+    }
+
+    input[type="text"],
+    select,
+    button {
+        padding: 12px;
+    }
+}
